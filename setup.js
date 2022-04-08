@@ -19,9 +19,7 @@ class Ball {
         this.x += this.xvel;
         this.y += this.yvel;
         this.velocity = sqrt(this.xvel*this.xvel + this.yvel*this.yvel);
-        if (this.y + this.size < windowHeight) {
-            this.yvel -= gravity;
-        }
+        this.yvel -= gravity;
     }
     restrict() {
         if (this.x + this.size > windowWidth) {
@@ -67,15 +65,64 @@ class Fluid {
     calculateDrag(obj) {
         var dragMagnitude = this.drag * obj.velocity*obj.velocity;
         var dragForce = [- obj.xvel, - obj.yvel];
-        dragForce[0] /= obj.velocity;
-        dragForce[1] /= obj.velocity;
-        dragForce[0] *= dragMagnitude;
-        dragForce[1] *= dragMagnitude;
-        return [dragForce[0], dragForce[1]];
+        for (var i in dragForce) {
+            dragForce[i] /= obj.velocity;
+            dragForce[i] *= dragMagnitude;
+        }
+        if (abs(dragForce[0]) >= abs(obj.xvel)) {
+            dragForce[0] = - obj.xvel;
+        }
+        if (abs(dragForce[1]) >= abs(obj.yvel)) {
+            dragForce[1] = - obj.yvel;
+        }
+        return dragForce;
     }
     contains(obj) {
         if (obj.x + obj.size >= this.x && obj.x - obj.size <= this.x + this.w && obj.y + obj.size >= this.y && obj.y - obj.size <= this.y + this.h) {
             return true;
+        }
+    }
+    draw() {
+        noStroke();
+        fill(this.color);
+        rect(this.x, this.y, this.w, this.h);
+    }
+}
+
+class Wall {
+    constructor(x, y, w, h, color, friction, bounce) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.color = color;
+        this.friction = friction;
+        this.bounce = bounce;
+    }
+    calculateBounce(obj) {
+        return [- obj.xvel * obj.mass * this.bounce, - obj.yvel * obj.mass * this.bounce];
+    }
+    touching(obj) {
+        if ((obj.x + obj.size) > this.x && (obj.x - obj.size) < (this.x + this.w) && (obj.y + obj.size) > this.y && (obj.y - obj.size) < (this.y + this.h)) {
+            if (obj.y <= this.y) {
+                if (abs(obj.y - this.y + obj.size) < 8 || ((obj.x - obj.size) > this.x && (obj.x + obj.size) < (this.x + this.w))) {
+                    obj.y = this.y - obj.size;
+                    return 2;
+                }
+            }
+            if (obj.x <= this.x) {
+                obj.x = this.x - obj.size;
+                return 1;
+            }
+            if (obj.x >= this.x + this.w) {
+                obj.x = this.x + this.w + obj.size;
+                return 1;
+            }
+            if (obj.y >= this.y + this.h) {
+                obj.y = this.y + this.h + obj.size;
+                return 2;
+            }
+            return 0;
         }
     }
     draw() {
