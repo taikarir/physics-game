@@ -49,7 +49,8 @@ class Ball {
     draw() {
         noStroke();
         fill(this.color);
-        ellipse(this.x, this.y, this.size*2, this.size*2);
+        //ellipse(this.x, this.y, this.size*2, this.size*2);
+        rect(this.x - this.size, this.y - this.size, this.size*2, this.size*2);
     }
 }
 
@@ -105,22 +106,25 @@ class Wall {
     touching(obj) {
         if ((obj.x + obj.size) > this.x && (obj.x - obj.size) < (this.x + this.w) && (obj.y + obj.size) > this.y && (obj.y - obj.size) < (this.y + this.h)) {
             if (obj.y <= this.y) {
-                if (abs(obj.y - this.y + obj.size) < 8 || ((obj.x - obj.size) > this.x && (obj.x + obj.size) < (this.x + this.w))) {
+                if (abs(obj.y - this.y + obj.size) < 15 || ((obj.x - obj.size) > this.x && (obj.x + obj.size) < (this.x + this.w))) {
                     obj.y = this.y - obj.size;
                     return 2;
                 }
             }
+            if (obj.y >= this.y + this.h) {
+                if (abs((obj.y - obj.size) - (this.y + this.h)) < 8 || ((obj.x - obj.size) > this.x && (obj.x + obj.size) < (this.x + this.w))) {
+                    obj.y = this.y + this.h + obj.size;
+                    return 2;
+                }
+            }
             if (obj.x <= this.x) {
-                obj.x = this.x - obj.size;
-                return 1;
+               // if (abs(
+                    obj.x = this.x - obj.size;
+                    return 1;
             }
             if (obj.x >= this.x + this.w) {
                 obj.x = this.x + this.w + obj.size;
                 return 1;
-            }
-            if (obj.y >= this.y + this.h) {
-                obj.y = this.y + this.h + obj.size;
-                return 2;
             }
             return 0;
         }
