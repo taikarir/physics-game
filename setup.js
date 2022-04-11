@@ -103,11 +103,12 @@ class Wall {
     calculateBounce(obj) {
         return [- obj.xvel * obj.mass * this.bounce, - obj.yvel * obj.mass * this.bounce];
     }
-    touching(obj) {
+    touching(obj, i) {
         if ((obj.x + obj.size) > this.x && (obj.x - obj.size) < (this.x + this.w) && (obj.y + obj.size) > this.y && (obj.y - obj.size) < (this.y + this.h)) {
             if (obj.y <= this.y) {
                 if (abs(obj.y - this.y + obj.size) < 15 || ((obj.x - obj.size) > this.x && (obj.x + obj.size) < (this.x + this.w))) {
                     obj.y = this.y - obj.size;
+                    touchingGround[i] = 8;
                     return 2;
                 }
             }
