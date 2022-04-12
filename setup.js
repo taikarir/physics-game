@@ -109,6 +109,9 @@ class Wall {
                 if (abs(obj.y - this.y + obj.size) < 15 || ((obj.x - obj.size) > this.x && (obj.x + obj.size) < (this.x + this.w))) {
                     obj.y = this.y - obj.size;
                     touchingGround[i] = 8;
+                    if (!keyIsDown(RIGHT_ARROW) && !keyIsDown(LEFT_ARROW)) {
+                        obj.xvel *= (1 - this.friction);
+                    }
                     return 2;
                 }
             }

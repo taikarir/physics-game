@@ -10,8 +10,8 @@ balls.push(new Ball(300, 200, 30, 5, [255, 255, 255]));
 var fluids = [];
 fluids.push(new Fluid(0, 350, 800, 300, [50, 50, 100], 0.1));
 var walls = [];
-walls.push(new Wall(0, 800, 800, 50, [200, 50, 50], 0.01, 1.5));
-walls.push(new Wall(0, 600, 200, 50, [200, 50, 50], 0.01, 1.5));
+walls.push(new Wall(0, 800, 800, 50, [200, 50, 50], 0.05, 0.5));
+walls.push(new Wall(0, 600, 200, 50, [200, 50, 50], 0.05, 0.5));
 var touchingGround = [];
 for (var i in balls) {
     touchingGround.push(0);
@@ -36,8 +36,15 @@ function draw() {
             balls[i].exertForce(-5/balls[i].mass, 0);
         }
         if (keyIsDown(UP_ARROW)) {
-            if (touchingGround > 0) {
-                balls[i].exertForce(0, -25/balls[i].mass);
+            var isInFluid = 0;
+            for (var j in fluids) {
+                if (fluids[j].contains(balls[i])) {
+                    isInFluid = 1;
+                    break;
+                }
+            }
+            if (touchingGround > 0 || isInFluid) {
+                balls[i].exertForce(0, -50/balls[i].mass);
             }
         }
         for (var j in fluids) {
